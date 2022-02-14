@@ -105,7 +105,6 @@ fileDatabase = {} # dict of file name - file data
 buffer = 4096
 backlog = 5
 localIPv4 = "192.168.1.208"
-globalIPv4 = "78.27.114.0"
 localIPv6 = "fe80::c10c:de5e:2cbf:132c%9"
 port_IPv4 = 34000
 port_IPv6 = 36000

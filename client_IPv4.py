@@ -1,13 +1,14 @@
 import socket
 from threading import Thread
+
 #import urllib.request
 
 #globalIPv4 = urllib.request.urlopen('https://ident.me').read().decode('utf8')
 #print(globalIPv4)
 
 #localIPv4 = socket.gethostbyname(socket.gethostname())
-localIPv4 = "192.168.1.208"
-globalIPv4 = "78.27.114.0"
+# localIPv4 = "192.168.1.208"
+globalIPv4 = "87.92.16.209"
 # 192.168.1.208
 # public ipv4 address of my local computer 78.27.114.0 Disable firewall
 # punch a hole through my router 
@@ -38,7 +39,7 @@ def send(clientSocketIPv4):
 
 def main():
     clientSocketIPv4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    address_IPv4 = (localIPv4, port_IPv4)
+    address_IPv4 = (globalIPv4, port_IPv4)
     clientSocketIPv4.connect(address_IPv4)
     # instead of connecting local host ipv4, actually connect to the public ipv4 of this local computer
     receive_thread = Thread(target=receive, args=(clientSocketIPv4,))
