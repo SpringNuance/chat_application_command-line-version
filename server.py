@@ -1,7 +1,7 @@
 import socket
 from threading import Thread
 from datetime import datetime
-from serverHelper import broadcast, privateMessage, sendFile, receiveFile, seeAll, clientStatus, instructions, createGroup, renameGroup, seeMembers, addMembers, removeMembers, joinGroup, leaveGroup, sendGroupMessage, deleteGroup, quitOnline
+from serverHelper import broadcast, publicAnnouncement, privateMessage, sendFile, receiveFile, seeAll, clientStatus, instructions, createGroup, renameGroup, seeMembers, addMembers, removeMembers, joinGroup, leaveGroup, sendGroupMessage, deleteGroup, quitOnline
 
 def accept_clients_IPv4():
     while True:
@@ -53,13 +53,11 @@ def handle_client(senderName, client):
             break
         message = client.recv(buffer).decode("utf8") # String
         if message.startswith("/all "): # Command /all <message>
-            timeStamp = datetime.now().strftime("%d/%m/%y %H:%M:%S")
-            messageSent = "<" + timeStamp + "> " + senderName + ": " + message[5:]
-            broadcast(messageSent, onlineClients)
+            publicAnnouncement(senderName, message, onlineClients, registeredClients, bufferedMessages)
         elif message.startswith("/pm "): # Command /pm <client name> <message>
             privateMessage(senderName, message[4:], onlineClients, registeredClients, lastOnline, bufferedMessages)
         elif message.startswith("/file "): # Command /file <client name> <file path>
-            sendFile(senderName, message[6:], onlineClients, fileDatabase)
+            sendFile(senderName, message[6:], onlineClients, fileDatabase, bufferedMessages)
         elif message.startswith("/receive "): # Command /receive <file path> as <file name>
             receiveFile(senderName, message[9:], onlineClients, fileDatabase)
         elif message.startswith("/see"): # Command /see

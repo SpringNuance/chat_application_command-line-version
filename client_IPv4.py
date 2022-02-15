@@ -6,13 +6,13 @@ from threading import Thread
 #globalIPv4 = urllib.request.urlopen('https://ident.me').read().decode('utf8')
 #print(globalIPv4)
 
-#localIPv4 = socket.gethostbyname(socket.gethostname())
-# localIPv4 = "192.168.1.208"
+# localIPv4 = socket.gethostbyname(socket.gethostname())
+
+localIPv4 = "192.168.1.208"
 globalIPv4 = "87.92.16.209"
-# 192.168.1.208
-# public ipv4 address of my local computer 78.27.114.0 Disable firewall
-# punch a hole through my router 
-# client would run on any laptop
+
+# Remember to Disable firewall
+
 port_IPv4 = 34000
 buffer = 4096
 backlog = 5
@@ -20,7 +20,7 @@ backlog = 5
 def receive(clientSocketIPv4):
     while True:
         message = clientSocketIPv4.recv(buffer).decode("utf8")
-        if message.startswith("The file has been successfully saved"):
+        if message.startswith("/downloaded"):
             fileData = message.split("\n")[1]
             fileName = message.split("\n")[2]
             newFile = open(fileName, "a")

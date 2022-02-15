@@ -11,7 +11,7 @@ backlog = 5
 def receive(clientSocketIPv6):
     while True:
         message = clientSocketIPv6.recv(buffer).decode("utf8")
-        if message.startswith("The file has been successfully saved"):
+        if message.startswith("/downloaded"):
             fileData = message.split("\n")[1]
             fileName = message.split("\n")[2]
             newFile = open(fileName, "a")

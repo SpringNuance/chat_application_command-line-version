@@ -4,6 +4,14 @@ def broadcast(message, onlineClients):
     for name in onlineClients:
         onlineClients[name].send(bytes(message, "utf8"))
 
+def publicAnnouncement(senderName, message, onlineClients, registeredClients, bufferedMessages):
+    timeStamp = datetime.now().strftime("%d/%m/%y %H:%M:%S")
+    messageSent = "<" + timeStamp + "> Public annoucement from " + senderName + ": " + message[5:]
+    for member in registeredClients:
+        if member not in onlineClients:
+            bufferedMessages[member].append(messageSent)
+    broadcast(messageSent, onlineClients)
+
 def privateMessage(senderName, message, onlineClients, registeredClients, lastOnline, bufferedMessages): 
     receiverName = message.split()[0]
     if receiverName not in registeredClients:
@@ -19,13 +27,19 @@ def privateMessage(senderName, message, onlineClients, registeredClients, lastOn
         onlineClients[receiverName].send(bytes("<" + timeStamp + "> " + senderName + ": " + messageBody, "utf8"))
         onlineClients[senderName].send(bytes(f"{receiverName} has seen your message", "utf8"))
 
-def sendFile(senderName, message, onlineClients, fileDatabase):
+def sendFile(senderName, message, onlineClients, fileDatabase, bufferedMessages):
     receiverName = message.split()[0]
     filePath = message.split()[1]
     fileOpen = open(filePath)
     fileData = fileOpen.read()
-    onlineClients[receiverName].send(bytes(f"A file is sent to you by user {senderName}. Would you like to save the file?\nType '/receive {filePath} as <your chosen file name>' to receive the file\n>>>", "utf8"))
     fileDatabase[filePath] = fileData
+    if receiverName in onlineClients:
+        onlineClients[senderName].send(bytes(f"{receiverName} has seen your file transfer", "utf8"))
+        onlineClients[receiverName].send(bytes(f"A file is sent to you by user {senderName}. Would you like to save the file?\nType '/receive {filePath} as <your chosen file name>' to receive the file\n>>>", "utf8"))
+    else: 
+        timeStamp = datetime.now().strftime("%d/%m/%y %H:%M:%S")
+        onlineClients[senderName].send(bytes(f"{receiverName} is currently offline. They will see your file transfer when they go online", "utf8"))
+        bufferedMessages[receiverName].append(f"<{timeStamp}> A file is sent to you by user {senderName}. Would you like to save the file?\nType '/receive {filePath} as <your chosen file name>' to receive the file\n>>>")
 
 def receiveFile(senderName, message, onlineClients, fileDatabase):
     filePath = message.split()[0]
@@ -34,7 +48,8 @@ def receiveFile(senderName, message, onlineClients, fileDatabase):
         onlineClients[senderName].send(bytes(f"There is no file {filePath} in the server. Please check misspellings", "utf8"))
     else:
         fileData = fileDatabase[filePath]
-        onlineClients[senderName].send(bytes(f"The file has been successfully saved\n{fileData}\n{fileName}", "utf8"))
+        onlineClients[senderName].send(bytes(f"The file has been successfully saved\n", "utf8"))
+        onlineClients[senderName].send(bytes(f"/downloaded\n{fileData}\n{fileName}", "utf8"))
 
 def seeAll(senderName, onlineClients, registeredClients, groupCreator):
     registeredClientsInfo = "Registered clients: "
@@ -84,7 +99,7 @@ def instructions(senderName, onlineClients):
     
     # Server stats
     # Command /see
-    onlineClients[senderName].send(bytes("\nSend '/see' to see all online clients and available groups", "utf8"))
+    onlineClients[senderName].send(bytes("\nSend '/see' to see all registered clients, online clients and available groups", "utf8"))
     # Command /status <client name>
     onlineClients[senderName].send(bytes("\nSend '/status <client name>' to check current status of a client", "utf8"))
     # Command /command 
@@ -225,12 +240,12 @@ def leaveGroup(senderName, message, groupCreator, groupMembers, onlineClients):
     
 def sendGroupMessage(senderName, message, groupCreator, groupMembers, onlineClients, bufferedMessages):
     groupName = message.split()[0]
-    groupMessage = message.split()[1]
+    groupMessage = message.split(' ', 1)[1]
     if groupName not in groupCreator:
         onlineClients[senderName].send(bytes("The specified group does not exist. Please check misspellings", "utf8"))
     elif senderName not in groupMembers[groupName]:
         onlineClients[senderName].send(bytes(f"You are not a member in the group {groupName} and thus cannot send a message. Consider '/join {groupName}' to join the group", "utf8"))
-    else: 
+    else:
         onlineMembersExceptSender = []
         offlineMembers = []
         for member in groupMembers[groupName]: 
