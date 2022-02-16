@@ -2,8 +2,11 @@ import socket
 from socket import AF_INET6, SOCK_STREAM
 from threading import Thread
 
-# The ISP of the network does not support IPv6. There are no global IPv6
 localIPv6 = "fe80::c10c:de5e:2cbf:132c%9"
+globalIPv6 = "2001:14ba:a0bd:dd00:c10c:de5e:2cbf:132c"
+
+# Remember to Disable firewall for clients in other networks to be able to connect to the server
+
 portIPv6 = 36000
 buffer = 1024
 backlog = 5
@@ -30,7 +33,7 @@ def send(clientSocketIPv6):
 
 def main():
     clientSocketIPv6 = socket.socket(AF_INET6, SOCK_STREAM)
-    addressIPv6 = (localIPv6, portIPv6)
+    addressIPv6 = (globalIPv6, portIPv6)
     clientSocketIPv6.connect(addressIPv6)
         
     receive_thread = Thread(target=receive, args=(clientSocketIPv6,))

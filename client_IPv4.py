@@ -11,7 +11,7 @@ from threading import Thread
 localIPv4 = "192.168.1.208"
 globalIPv4 = "87.92.16.209"
 
-# Remember to Disable firewall
+# Remember to Disable firewall for clients in other networks to be able to connect to the server
 
 port_IPv4 = 34000
 buffer = 4096
@@ -41,7 +41,7 @@ def main():
     clientSocketIPv4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     address_IPv4 = (globalIPv4, port_IPv4)
     clientSocketIPv4.connect(address_IPv4)
-    # instead of connecting local host ipv4, actually connect to the public ipv4 of this local computer
+
     receive_thread = Thread(target=receive, args=(clientSocketIPv4,))
     send_thread = Thread(target=send, args=(clientSocketIPv4,))
     receive_thread.start()
