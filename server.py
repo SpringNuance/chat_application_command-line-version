@@ -8,12 +8,12 @@ def accept_clients_IPv4():
         clientIPv4, client_addressIPv4 = socket_IPv4.accept()
         print("%s:%s has connected." % client_addressIPv4)
         clientIPv4.send(bytes("Welcome to the chat server!", "utf8"))
-        clientIPv4.send(bytes("\nSend '/command' to see instructions on how to use the chat application", "utf8"))
         clientIPv4.send(bytes("\nFirst, please enter your name to register/login", "utf8"))
         name = clientIPv4.recv(buffer).decode("utf8")
         registeredAddresses[name] = client_addressIPv4
         registeredClients[name] = clientIPv4 # socket
         onlineClients[name] = clientIPv4 # socket
+        clientIPv4.send(bytes("\nSend '/command' to see instructions on how to use the chat application", "utf8"))
         message = f"{name} has joined the server"
         broadcast(message, onlineClients)
 

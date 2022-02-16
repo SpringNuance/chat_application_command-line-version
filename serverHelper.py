@@ -77,7 +77,7 @@ def clientStatus(senderName, message, onlineClients, registeredClients, lastOnli
     receiverName = message
     if receiverName not in registeredClients:
         onlineClients[senderName].send(bytes(f"There is no such user {receiverName} in the server", "utf8"))
-    if receiverName in onlineClients:
+    elif receiverName in onlineClients:
         onlineClients[senderName].send(bytes(f"The user {receiverName} is currently online", "utf8"))
     else: 
         onlineClients[senderName].send(bytes(f"The user {receiverName} is currently offline. Last online {lastOnline[receiverName]}", "utf8"))
@@ -113,7 +113,7 @@ def instructions(senderName, onlineClients):
     # Command /add <group name> <member> <member>...<member>. Only for group creator
     onlineClients[senderName].send(bytes("\nSend '/add <member> <member>...<member>' to add members to a group. Only for group creator", "utf8"))
     # Command /remove <group name> <member> <member>...<member>. Only for group creator
-    onlineClients[senderName].send(bytes("\nSend '/remove <member> <member>...<member>' to add members from a group", "utf8"))
+    onlineClients[senderName].send(bytes("\nSend '/remove <member> <member>...<member>' to remove members from a group. Only for group creator", "utf8"))
     # Command /delete <group name>. Only for group creator
     onlineClients[senderName].send(bytes("\nSend '/delete <group name>' to delete your created group. Only for group creator", "utf8"))
     # Command /members <group name>
