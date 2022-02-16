@@ -1,1 +1,0 @@
-groupMembers = {} # dict of group name - group members
